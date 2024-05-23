@@ -13,5 +13,5 @@ Go Rate Limiter is a Go package that provides rate limiting functionality with m
 Use `go get` to install the package:
 
 ```sh
-go get github.com/rcdmk/go-rate-limiter
+go get github.com/rcdmk/go-ratelimiter
 ```
