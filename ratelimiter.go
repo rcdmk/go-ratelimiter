@@ -15,27 +15,27 @@ type RateLimiter struct {
 }
 
 // fillBucket fills the bucket with tokens based on the elapsed time since the last fill.
-func (rl *RateLimiter) fillBucket(limitKey string) {
+func (rl *RateLimiter) fillBucket(sourceKey string) {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
 
-	elapsed := time.Since(rl.lastFill[limitKey]).Seconds()
-	rl.bucket[limitKey] += int(elapsed * float64(rl.maxRatePerSecond))
-	if rl.bucket[limitKey] > rl.maxBurst {
-		rl.bucket[limitKey] = rl.maxBurst
+	elapsed := time.Since(rl.lastFill[sourceKey]).Seconds()
+	rl.bucket[sourceKey] += int(elapsed * float64(rl.maxRatePerSecond))
+	if rl.bucket[sourceKey] > rl.maxBurst {
+		rl.bucket[sourceKey] = rl.maxBurst
 	}
-	rl.lastFill[limitKey] = time.Now()
+	rl.lastFill[sourceKey] = time.Now()
 }
 
 // Allow checks if the rate wasn't exhausted for a particular key to allow or not an event to be executed.
-func (rl *RateLimiter) Allow(limitKey string) bool {
-	rl.fillBucket(limitKey)
+func (rl *RateLimiter) Allow(sourceKey string) bool {
+	rl.fillBucket(sourceKey)
 
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
 
-	if rl.bucket[limitKey] > 0 {
-		rl.bucket[limitKey]--
+	if rl.bucket[sourceKey] > 0 {
+		rl.bucket[sourceKey]--
 		return true
 	}
 
