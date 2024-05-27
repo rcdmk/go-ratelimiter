@@ -7,11 +7,11 @@ import (
 
 // RateLimiter represents a rate limiter that limits the rate of events, implemented using a token bucket algorithm.
 type RateLimiter struct {
-	maxRatePerSecond int                  // The maximum rate of events allowed per second.
-	maxBurst         int                  // The maximum number of events that can be bursted.
-	bucket           map[string]int       // The current number of events in the bucket.
-	lastFill         map[string]time.Time // The time when the bucket was last filled.
-	mu               sync.Mutex           // Mutex to synchronize access to the rate limiter.
+	maxRatePerMillisecond float64        // The maximum rate of events allowed per millisecond.
+	maxBurst              int            // The maximum number of events that can be bursted.
+	bucket                map[string]int // The current number of events in the bucket.
+	lastFill              map[string]int // The Unix time in milliseconds when the bucket was last filled.
+	mu                    sync.Mutex     // Mutex to synchronize access to the rate limiter.
 }
 
 // fillBucket fills the bucket with tokens based on the elapsed time since the last fill.
@@ -19,12 +19,14 @@ func (rl *RateLimiter) fillBucket(sourceKey string) {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
 
-	elapsed := time.Since(rl.lastFill[sourceKey]).Seconds()
-	rl.bucket[sourceKey] += int(elapsed * float64(rl.maxRatePerSecond))
+	now := int(time.Now().UnixMilli())
+	elapsed := now - rl.lastFill[sourceKey]
+
+	rl.bucket[sourceKey] += int(float64(elapsed) * rl.maxRatePerMillisecond)
 	if rl.bucket[sourceKey] > rl.maxBurst {
 		rl.bucket[sourceKey] = rl.maxBurst
 	}
-	rl.lastFill[sourceKey] = time.Now()
+	rl.lastFill[sourceKey] = now
 }
 
 // Allow checks if the rate wasn't exhausted for a particular key to allow or not an event to be executed.
@@ -51,9 +53,9 @@ type Options struct {
 // New creates a new ready to use RateLimiter with the specified options.
 func New(options Options) *RateLimiter {
 	return &RateLimiter{
-		maxRatePerSecond: options.MaxRatePerSecond,
-		maxBurst:         options.MaxBurst,
-		bucket:           make(map[string]int),
-		lastFill:         make(map[string]time.Time),
+		maxRatePerMillisecond: float64(options.MaxRatePerSecond) / 1000.0,
+		maxBurst:              options.MaxBurst,
+		bucket:                make(map[string]int),
+		lastFill:              make(map[string]int),
 	}
 }
