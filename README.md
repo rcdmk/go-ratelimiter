@@ -33,9 +33,36 @@ import (
         MaxBurst: 15,
     })
 
-    if !rateLimiter.Allow() {
+    if !rateLimiter.Allow("my-operation-name") {
         // over rate limit, deny action and stop execution
     }
 
     // proceed normaly
+```
+
+### Middleware
+
+**`StdLib`** is a standard lib compatible middleware implementation for limitting requests served through an HTTP server.
+
+It is also compatible with all frameworks that can use standard lib middleware (eg. [chi](https://github.com/go-chi/chi), [Gorilla](https://github.com/gorilla/mux), etc.).
+
+```go
+import (
+    "github.com/rcdmk/go-ratelimiter/ratelimitermiddleware"
+)
+
+// ...
+
+options := ratelimitermiddleware.Options{
+    MaxRatePerSecond: 15,
+    MaxBurst:         10,
+    SourceHeaderKey:  "Authorization",
+}
+
+// wrap your handler with the middleware
+rateLimitedHandler := ratelimitermiddleware.StdLib(handler, options)
+
+http.Handle("/my-resource", rateLimitedHandler)
+
+// ...
 ```
