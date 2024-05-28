@@ -7,6 +7,7 @@ Go Rate Limiter is a Go package that provides rate limiting functionality with m
 - Simple and easy-to-use rate limiter for Go applications.
 - Middleware implementations for standard lib and popular frameworks.
 - Configurable rate limiting options.
+- In-memory caching for rate-limiter can be replaced by your own implementation.
 
 ## Installation
 
@@ -35,9 +36,11 @@ import (
 
     if !rateLimiter.Allow("my-operation-name") {
         // over rate limit, deny action and stop execution
+        return
     }
 
     // proceed normaly
+// ...
 ```
 
 ### Middleware
@@ -48,7 +51,9 @@ It is also compatible with all frameworks that can use standard lib middleware (
 
 ```go
 import (
+    // ...
     "github.com/rcdmk/go-ratelimiter/ratelimitermiddleware"
+    // ...
 )
 
 // ...
