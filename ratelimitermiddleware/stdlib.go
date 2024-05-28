@@ -2,6 +2,7 @@ package ratelimitermiddleware
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/rcdmk/go-ratelimiter"
 )
@@ -26,6 +27,10 @@ func StdLib(next http.Handler, options Options) http.Handler {
 
 		if !limiter.Allow(key) {
 			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+			w.Header().Add("Retry-After", "1")
+			w.Header().Add("RateLimit-Limit", strconv.Itoa(options.MaxRatePerSecond))
+			w.Header().Add("RateLimit-Remaining", "0")
+			w.Header().Add("RateLimit-Reset", "1")
 			return
 		}
 
