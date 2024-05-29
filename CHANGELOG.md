@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0]
+
 ### Added
 
 - `ratelimiter` package brings a generic rate limiter implementation that can be used as base for any use case.
@@ -15,4 +17,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cache.GetterSetter` interface provices a mean for specifying a cache implementation for the rate limiter.
 - `cache.InMemory` is a default implementation for caching that supports TTL and uses standard maps as backing storage. This implementation is used by default if no implementation is provided.
 
-[Unreleased]: https://github.com/rcdmk/go-ratelimiter/compare/d8b2554...HEAD
+[Unreleased]: https://github.com/rcdmk/go-ratelimiter/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/rcdmk/go-ratelimiter/compare/d8b2554...v0.1.0
