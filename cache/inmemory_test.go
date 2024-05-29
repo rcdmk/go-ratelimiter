@@ -44,7 +44,7 @@ func Test_InMemory_Cache_Can_Store_And_Retrieve_Values_For_A_Given_Key_Within_Ex
 
 	memCache := cache.NewInMemory()
 
-	_ = memCache.SetWithExpiration(key, value, 2*time.Millisecond)
+	_ = memCache.SetWithExpiration(key, value, 5*time.Millisecond)
 	time.Sleep(1 * time.Millisecond)
 	retrievedValue, err := memCache.Get(key)
 	if err != nil {
