@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `ratelimitermiddleware.StdLib` now takes cache options to enable replacing the cache implementation.
+
 ## [0.1.0]
 
 ### Added
@@ -18,4 +22,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cache.InMemory` is a default implementation for caching that supports TTL and uses standard maps as backing storage. This implementation is used by default if no implementation is provided.
 
 [Unreleased]: https://github.com/rcdmk/go-ratelimiter/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/rcdmk/go-ratelimiter/compare/d8b2554...v0.1.0
+[0.1.0]: https://github.com/rcdmk/go-ratelimiter/commits/v0.1.0/
