@@ -1,6 +1,7 @@
 package ratelimitermiddleware
 
 import (
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -31,12 +32,16 @@ func StdLib(next http.Handler, options Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := r.Header.Get(options.SourceHeaderKey)
 
+		burstResetSeconds := strconv.FormatFloat(math.Floor(float64(options.MaxBurst)/float64(options.MaxRatePerSecond)), 'f', 0, 64)
+
+		w.Header().Add("RateLimit-Limit", strconv.Itoa(options.MaxRatePerSecond))
+		w.Header().Add("RateLimit-Reset", burstResetSeconds)
+		w.Header().Add("RateLimit-Remaining", strconv.Itoa(limiter.Remaining(key)))
+
 		if !limiter.Allow(key) {
-			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
-			w.Header().Add("Retry-After", "1")
-			w.Header().Add("RateLimit-Limit", strconv.Itoa(options.MaxRatePerSecond))
+			w.Header().Add("Retry-After", burstResetSeconds)
 			w.Header().Add("RateLimit-Remaining", "0")
-			w.Header().Add("RateLimit-Reset", "1")
+			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
 			return
 		}
 

@@ -83,6 +83,13 @@ func (rl *RateLimiter) fillBucket(sourceKey string) {
 	rl.setLastFillFor(sourceKey, now)
 }
 
+// Remaining returns the number of remaining requests for the given source key.
+func (rl *RateLimiter) Remaining(sourceKey string) int {
+	rl.fillBucket(sourceKey)
+
+	return rl.getBucketFor(sourceKey)
+}
+
 // Allow checks if the rate wasn't exhausted for a particular key to allow or not an event to be executed.
 // If cache operations fail, it will always return false.
 func (rl *RateLimiter) Allow(sourceKey string) bool {
