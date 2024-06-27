@@ -1,10 +1,10 @@
-module github.com/rcdmk/go-ratelimiter/cache/redis
+module github.com/rcdmk/go-ratelimiter/cache/rediscache
 
 go 1.22.1
 
 require (
 	github.com/alicebob/miniredis/v2 v2.33.0
-	github.com/rcdmk/go-ratelimiter v0.1.0
+	github.com/rcdmk/go-ratelimiter v0.2.0
 	github.com/redis/go-redis/v9 v9.5.3
 )
 

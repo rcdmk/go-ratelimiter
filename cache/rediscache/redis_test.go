@@ -1,4 +1,4 @@
-package redis_test
+package rediscache_test
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/rcdmk/go-ratelimiter/cache"
-	cacheRedis "github.com/rcdmk/go-ratelimiter/cache/redis"
+	"github.com/rcdmk/go-ratelimiter/cache/rediscache"
 )
 
 func newMockedRedis(t *testing.T) (*redis.Client, *miniredis.Miniredis) {
@@ -30,7 +30,7 @@ func Test_Redis_Cache_Can_Store_And_Retrieve_Values_For_A_Given_Key(t *testing.T
 
 	redisClient, _ := newMockedRedis(t)
 
-	memCache := cacheRedis.New(redisClient)
+	memCache := rediscache.New(redisClient)
 
 	_ = memCache.Set(key1, value1)
 	_ = memCache.Set(key2, value2)
@@ -59,7 +59,7 @@ func Test_Redis_Cache_Can_Store_And_Retrieve_Values_For_A_Given_Key_Within_Expir
 	value := 42
 
 	redisClient, miniRedis := newMockedRedis(t)
-	memCache := cacheRedis.New(redisClient)
+	memCache := rediscache.New(redisClient)
 
 	_ = memCache.SetWithExpiration(key, value, 5*time.Millisecond)
 	miniRedis.FastForward(4 * time.Millisecond)
@@ -78,7 +78,7 @@ func Test_Redis_Cache_Cant_Retrieve_Values_For_A_Given_Expired_Key(t *testing.T)
 	value := 42
 
 	redisClient, miniRedis := newMockedRedis(t)
-	memCache := cacheRedis.New(redisClient)
+	memCache := rediscache.New(redisClient)
 
 	_ = memCache.SetWithExpiration(key, value, 2*time.Millisecond)
 	miniRedis.FastForward(3 * time.Millisecond)

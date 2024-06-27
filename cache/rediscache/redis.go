@@ -1,5 +1,5 @@
-// Package redis provides a cache service that stores values in Redis, implementing the [cache.GetterSetter] interface.
-package redis
+// Package rediscache provides a cache service that stores values in Redis, implementing the [cache.GetterSetter] interface.
+package rediscache
 
 import (
 	"context"
